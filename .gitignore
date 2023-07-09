@@ -111,3 +111,6 @@ jboss/server/minimal/work/**/*
 
 # Hibernate
 *.cfg.xml
+
+# Ignore Gradle build output directory
+build
