@@ -15,4 +15,4 @@ plugins {
 */
 
 rootProject.name = 'dgdlz'
-include('app')
+include('TextadventureApp')
