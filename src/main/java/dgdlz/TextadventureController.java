@@ -226,6 +226,8 @@ public class TextadventureController implements Initializable {
 				listeMitRaumAktionsButtons.add(ostButton);
 				break;
 			}
+			default:
+				throw new IllegalArgumentException("Himmelsrichtung unbekannt");
 		}
 	}
 
@@ -258,7 +260,7 @@ public class TextadventureController implements Initializable {
 
 	private void erkundungsButtonAktivieren() {
 		erkundungsButton.setOnAction(e -> {
-			textausgabe(spielfeld.ermittleAufenthaltsraumSpieler(spieler).erkunden());
+			textausgabe(spielfeld.ermittleAufenthaltsraumSpieler(spieler).untersuchen());
 		});
 	}
 

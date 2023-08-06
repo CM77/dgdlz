@@ -3,7 +3,7 @@ package dgdlz;
 public enum Himmelsrichtung {
 	NORDEN("Norden"), SUEDEN("Süden"), OSTEN("Osten"), WESTEN("Westen");
 
-	String richtungName;
+	private String richtungName;
 
 	Himmelsrichtung(String name) {
 		richtungName = name;

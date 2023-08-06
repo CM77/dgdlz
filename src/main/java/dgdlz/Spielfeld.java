@@ -81,7 +81,7 @@ public class Spielfeld {
 				return r;
 			}
 		}
-		return null; // TODO Exception, da es immer Aufenthaltsraum geben muss
+		throw new IllegalArgumentException("Spieler muss in einem Raum sein.");
 	}
 
 	public List<Raum> ermittleDieNachbarraeume(Spieler spieler) {
@@ -109,7 +109,8 @@ public class Spielfeld {
 				return Himmelsrichtung.WESTEN;
 			}
 		}
-		return null; // TODO Exception
+		throw new IllegalArgumentException(
+				"Es gibt nur vier Himmelsrichtungen, in die eine Spielfigur bewegt werden kann.");
 	}
 
 }
