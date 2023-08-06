@@ -31,4 +31,10 @@ public final class Spieler extends Spielfigur implements Bewegbar {
 		position.x = Math.min(4, position.x - 1);
 		return "Du gehst nach Westen.";
 	}
+
+	@Override
+	public String untersuchen() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

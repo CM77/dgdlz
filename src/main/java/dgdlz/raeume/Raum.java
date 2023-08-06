@@ -1,5 +1,7 @@
 package dgdlz.raeume;
 
+import static java.util.Objects.requireNonNull;
+
 import java.awt.Point;
 
 import javax.annotation.Nullable;
@@ -13,8 +15,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "raum")
-public class Raum extends Spielobjekt implements Erkundbar {
+@Table(name = Raum.TABLE)
+public class Raum extends Spielobjekt {
+
+	private static final String TABLE = "raum";
 
 	@Id
 	@Column(name = "id", nullable = false)
@@ -60,11 +64,11 @@ public class Raum extends Spielobjekt implements Erkundbar {
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.name = requireNonNull(name, "name == null!");
 	}
 
 	@Override
-	public @Nullable String erkunden() {
+	public @Nullable String untersuchen() {
 		return beschaffenheit;
 	}
 
