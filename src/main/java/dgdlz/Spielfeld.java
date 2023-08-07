@@ -12,10 +12,19 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 import dgdlz.akteure.Spieler;
+import dgdlz.gegenstaende.Gegenstand;
 import dgdlz.raeume.Raum;
 
 public class Spielfeld {
 
+	private static final String QUERY_RAEUME = """
+			SELECT * FROM textadventure.spielobjekt
+			WHERE spielobjekt_typ = 1
+			""";
+	private static final String QUERY_GEGENSTAENDE = """
+			SELECT * FROM textadventure.spielobjekt
+			WHERE spielobjekt_typ = 2
+			""";
 	private static Spielfeld instance;
 
 	private Spielfeld() {
@@ -30,18 +39,53 @@ public class Spielfeld {
 
 	private List<Raum> alleRaeume = new ArrayList<>();
 	private List<Raum> aktuelleNachbarraeume = new ArrayList<>();
+	private List<Gegenstand> alleGegenstaende = new ArrayList<>();
 
-	// Räume
-
-	public void setAlleRaeume() {
-		alleRaeume.clear();
-		List<Raum> r = erzeugeRaum();
-		for (Raum ra : r) {
-			alleRaeume.add(ra);
+	// Gegenstände
+	public void setAlleGegenstaende() {
+		alleGegenstaende.clear();
+		List<Gegenstand> gegenstaende = erzeugeGegenstand();
+		for (Gegenstand g : gegenstaende) {
+			alleGegenstaende.add(g);
 		}
 	}
 
-	private List<Raum> erzeugeRaum() {
+	private static List<Gegenstand> erzeugeGegenstand() {
+		Configuration con = new Configuration().configure().addAnnotatedClass(Gegenstand.class);
+		StandardServiceRegistry reg = new StandardServiceRegistryBuilder().applySettings(con.getProperties()).build();
+		SessionFactory sf = con.buildSessionFactory(reg);
+		Session session = sf.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+			List<Gegenstand> gegestaende = session.createNativeQuery(QUERY_GEGENSTAENDE, Gegenstand.class).list();
+			tx.commit();
+			return gegestaende;
+		} catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
+	public List<Gegenstand> getAlleGegenstaende() {
+		return alleGegenstaende;
+	}
+
+	// Räume
+	public void setAlleRaeume() {
+		alleRaeume.clear();
+		List<Raum> raeume = erzeugeRaum();
+		for (Raum r : raeume) {
+			alleRaeume.add(r);
+		}
+	}
+
+	private static List<Raum> erzeugeRaum() {
 		Configuration con = new Configuration().configure().addAnnotatedClass(Raum.class);
 		StandardServiceRegistry reg = new StandardServiceRegistryBuilder().applySettings(con.getProperties()).build();
 		SessionFactory sf = con.buildSessionFactory(reg);
@@ -50,7 +94,7 @@ public class Spielfeld {
 
 		try {
 			tx = session.beginTransaction();
-			List<Raum> raeume = session.createNativeQuery("select * FROM textadventure.raum", Raum.class).list();
+			List<Raum> raeume = session.createNativeQuery(QUERY_RAEUME, Raum.class).list();
 			tx.commit();
 			return raeume;
 		} catch (HibernateException e) {
@@ -73,6 +117,7 @@ public class Spielfeld {
 
 	public void initSpielfeld() { // TODO
 		setAlleRaeume();
+		setAlleGegenstaende();
 	}
 
 	public Raum ermittleAufenthaltsraumSpieler(Spieler spieler) {

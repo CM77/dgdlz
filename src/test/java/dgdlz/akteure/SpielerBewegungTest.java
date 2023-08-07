@@ -12,8 +12,10 @@ import dgdlz.Spielfeld;
 
 public class SpielerBewegungTest {
 
+	// TODO fix Tests
 	Spielfeld spielfeld = Spielfeld.getInstance();
 	Point startPosition = new Point(1, 0);
+//	Spieler spielerActual = new Spieler(null, 0, 0, null, null, null);
 	Spieler spielerActual = new Spieler();
 
 	@BeforeEach

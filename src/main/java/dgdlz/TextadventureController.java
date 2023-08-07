@@ -1,7 +1,6 @@
 package dgdlz;
 
 import java.awt.Point;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import dgdlz.akteure.Spieler;
+import dgdlz.gegenstaende.Gegenstand;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -34,9 +34,11 @@ import javafx.scene.layout.VBox;
 
 public class TextadventureController implements Initializable {
 
+	private static final String FXML_FILE = "Textadventure.fxml";
+
 	public static TextadventureController load() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(TextadventureController.class.getResource("Textadventure.fxml"));
+		loader.setLocation(TextadventureController.class.getResource(FXML_FILE));
 		loader.load();
 		return loader.getController();
 	}
@@ -46,7 +48,9 @@ public class TextadventureController implements Initializable {
 	@FXML
 	private MenuItem spielBeenden;
 	@FXML
-	private VBox aktionsOptionenVb;
+	private VBox raumAktionenVb;
+	@FXML
+	private VBox gegenstandAktionenVb;
 	@FXML
 	private Button raumButton;
 	@FXML
@@ -68,6 +72,7 @@ public class TextadventureController implements Initializable {
 	private Button westButton = new Button("nach Westen gehen");
 
 	private List<Button> listeMitRaumAktionsButtons = new ArrayList<>(Arrays.asList());
+	private List<Button> listeMitGegenstandsAktionsButtons = new ArrayList<>(Arrays.asList());
 	private String currentRoom;
 
 	Spieler spieler = new Spieler();
@@ -78,13 +83,13 @@ public class TextadventureController implements Initializable {
 		spieler.setPosition(new Point(0, 0)); // TODO
 		spielfeld.initSpielfeld();
 		zeigeOptionenAufenthaltsraum();
+		zeigeGegenstaende();
 		starteMenueSetup();
 		starteTastenEventHandler();
-		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf");
+		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
 	}
 
 	// Menüsteuerung
-
 	private void starteMenueSetup() {
 		spielBeenden.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -103,10 +108,8 @@ public class TextadventureController implements Initializable {
 		});
 	}
 
-	// Spielersteuerung
-
 	// TODO in eigene Klasse auslagern
-
+	// Spielersteuerung
 	private void starteTastenEventHandler() {
 		root.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
@@ -160,22 +163,17 @@ public class TextadventureController implements Initializable {
 						+ "-- " + currentRoom + " --" + "\n" //
 						+ "\n" //
 						+ ausgabe);
-		try {
-			bildausgabe(currentRoom);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		bildausgabe(currentRoom);
 	}
 
-	// TODO pics ebenfalls in DB auslagern
-	private void bildausgabe(String s) throws FileNotFoundException {
+	// TODO pics ebenfalls in DB auslagern (CDN?)
+	private void bildausgabe(String s) {
 		// Image image = new
 		// Image(getClass().getResourceAsStream("/images/keller.jpg"));
 		StringBuilder sb = new StringBuilder();
-		sb.append("/dgdlz/images/");
+		sb.append("/dgdlz/images/"); // TODO Konstante für die Pfade
 		sb.append(s.toLowerCase());
-		sb.append(".png");
+		sb.append(".png"); // TODO Konstante für die Pfade
 		Image image = new Image(getClass().getResourceAsStream(sb.toString()));
 		roomIv.setImage(image);
 	}
@@ -196,10 +194,31 @@ public class TextadventureController implements Initializable {
 		});
 	}
 
+	private void zeigeGegenstaende() {
+		gegenstandButton.setOnAction(e -> {
+			starteGegenstandsOptionenLogik();
+		});
+	}
+
+	private void starteGegenstandsOptionenLogik() {
+		gegenstandAktionenVb.getChildren().clear();
+		listeMitGegenstandsAktionsButtons.clear();
+		gegenstandsAktionsButtonsVorbereiten();
+	}
+
+	private void gegenstandsAktionsButtonsVorbereiten() {
+		for (Gegenstand g : spielfeld.getAlleGegenstaende()) {
+			listeMitGegenstandsAktionsButtons.add(new Button(g.getName()));
+		}
+		for (Button button : listeMitGegenstandsAktionsButtons) {
+			buttonMitStyleVersehenUndEinhaengenGegenstaende(button);
+		}
+	}
+
 	// TODO Zug soll sofort Optionen in vBoxOben aktualisieren und nicht erst bei
 	// Klick auf "Raum"!
 	private void starteZugLogik() {
-		aktionsOptionenVb.getChildren().clear();
+		raumAktionenVb.getChildren().clear();
 		listeMitRaumAktionsButtons.clear();
 		spielfeld.ermittleDieNachbarraeume(spieler);
 		spielfeld.ermittleMoeglicheHimmelsrichtungen(spieler);
@@ -264,10 +283,20 @@ public class TextadventureController implements Initializable {
 		});
 	}
 
+	// TODO duplicate Code
 	private void buttonMitStyleVersehenUndEinhaengen(Button button) {
-		button.getStyleClass().add("buttonAuswahlAktion");
+		button.getStyleClass().add("buttonAuswahlAktion"); // TODO Konstante
 		button.setAlignment(Pos.BASELINE_LEFT);
-		aktionsOptionenVb.getChildren().addAll(button);
+		raumAktionenVb.getChildren().addAll(button);
+		button.setMaxWidth(Double.MAX_VALUE);
+		VBox.setVgrow(button, Priority.ALWAYS);
+	}
+
+	// TODO duplicate Code
+	private void buttonMitStyleVersehenUndEinhaengenGegenstaende(Button button) {
+		button.getStyleClass().add("buttonAuswahlAktion"); // TODO Konstante
+		button.setAlignment(Pos.BASELINE_LEFT);
+		gegenstandAktionenVb.getChildren().addAll(button);
 		button.setMaxWidth(Double.MAX_VALUE);
 		VBox.setVgrow(button, Priority.ALWAYS);
 	}

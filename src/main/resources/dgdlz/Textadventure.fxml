@@ -36,7 +36,7 @@
                <children>
                   <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.rowIndex="1">
                      <content>
-                        <VBox fx:id="aktionsOptionenVb" />
+                        <VBox fx:id="raumAktionenVb" />
                      </content>
                   </ScrollPane>
                   <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -49,7 +49,7 @@
                   <Label text="Rucksack" GridPane.columnIndex="2" />
                   <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="744.0" layoutY="27.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <content>
-                        <VBox fx:id="gegenstandVb" />
+                        <VBox fx:id="gegenstandAktionenVb" />
                      </content>
                   </ScrollPane>
                </children>

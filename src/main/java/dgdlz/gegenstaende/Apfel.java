@@ -9,7 +9,7 @@ public class Apfel extends Gegenstand {
 		if (aufgegessen) {
 			return "Bis auf das Kerngehäuse ist nix mehr übrig vom Apfel.";
 		}
-		return "Es ist ein leckerer " + name + ".";
+		return "Es ist ein leckerer " + this.getName() + ".";
 	}
 
 	public String aufessen() {
