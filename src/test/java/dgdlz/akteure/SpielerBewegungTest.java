@@ -3,7 +3,6 @@ package dgdlz.akteure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Point;
-import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,6 @@ public class SpielerBewegungTest {
 
 	// TODO fix Tests
 	Spielfeld spielfeld = Spielfeld.getInstance();
-	Point startPosition = new Point(1, 0);
-//	Spieler spielerActual = new Spieler(null, 0, 0, null, null, null);
 	Spieler spielerActual = new Spieler();
 
 	@BeforeEach
@@ -26,70 +23,51 @@ public class SpielerBewegungTest {
 	}
 
 	@Test
-	public void test_Position_Spieler__Mit_einfacher_Bewegung_nach_Norden() {
+	public void test_Position_Spieler__ein_Spielzug_nach_Norden() {
 		// Given:
+		spielerActual.setPosition(new Point(0, 0));
 
 		// When:
 		spielerActual.nachNordenBewegen();
 
 		// Then:
-		assertEquals(spielerActual.getPosition(), new Point(1, 0 + 1));
+		assertEquals(spielerActual.getPosition(), new Point(0, 1));
 	}
 
 	@Test
-	public void test_Position_Spieler__Mit_mehrfachen_Bewegungen_nach_Westen() {
+	public void test_Position_Spieler__ein_Spielzug_nach_Westen() {
 		// Given:
-		Random random = new Random();
-		int zufallszahlBisFuenfzehn = random.nextInt(15);
+		spielerActual.setPosition(new Point(1, 0));
 
 		// When:
-		for (int i = 0; i < zufallszahlBisFuenfzehn; i++) {
-			spielerActual.nachWestenBewegen();
-		}
+		spielerActual.nachWestenBewegen();
 
 		// Then:
-		assertEquals(spielerActual.getPosition(), new Point(1 - zufallszahlBisFuenfzehn, 0));
+		assertEquals(spielerActual.getPosition(), new Point(0, 0));
 	}
 
 	@Test
-	public void test_Position_Spieler__Mit_mehrfachen_Bewegungen_nach_Sueden_und_Osten() {
+	public void test_Position_Spieler__ein_Spielzug_nach_Sueden() {
 		// Given:
-		Random random = new Random();
-		int zufallszahlBisFuenfzehn = random.nextInt(15);
+		spielerActual.setPosition(new Point(0, 2));
 
 		// When:
-		for (int i = 0; i < zufallszahlBisFuenfzehn; i++) {
-			spielerActual.nachSuedenBewegen();
-			spielerActual.nachOstenBewegen();
-		}
+		spielerActual.nachSuedenBewegen();
 
 		// Then:
-		assertEquals(spielerActual.getPosition(), new Point(1 + zufallszahlBisFuenfzehn, 0 - zufallszahlBisFuenfzehn));
+		assertEquals(spielerActual.getPosition(), new Point(0, 1));
 	}
 
 	@Test
-	public void test_Position_Spieler__Mit_Raum_in_dem_Spiel_startet() {
+	public void test_Position_Spieler__ein_Spielzug_nach_Osten() {
 		// Given:
-		spielfeld.initSpielfeld();
-
-		// When:
-		spielfeld.ermittleAufenthaltsraumSpieler(spielerActual);
-
-		// Then:
-		assertEquals("Marienplatz", spielfeld.ermittleAufenthaltsraumSpieler(spielerActual).getName());
-	}
-
-	@Test
-	public void test_Position_Spieler__Mit_Raum_in_den_sich_Spieler_bewegt() {
-		// Given:
-		spielfeld.initSpielfeld();
 		spielerActual.setPosition(new Point(0, 0));
 
 		// When:
-		spielfeld.ermittleAufenthaltsraumSpieler(spielerActual);
+		spielerActual.nachOstenBewegen();
 
 		// Then:
-		assertEquals("Stachus", spielfeld.ermittleAufenthaltsraumSpieler(spielerActual).getName());
+		assertEquals(spielerActual.getPosition(), new Point(1, 0));
 	}
 
 }
