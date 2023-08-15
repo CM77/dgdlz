@@ -120,7 +120,6 @@ public class SpielerBewegungTest {
 		spielerActual.setPosition(new Point(0, 0));
 
 		// When:
-		spielerActual.nachSuedenBewegen();
 
 		// Then:
 		assertThrowsExactly(IllegalerRaumException.class, () -> {

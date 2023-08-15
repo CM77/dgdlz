@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import dgdlz.akteure.Spieler;
 import dgdlz.gegenstaende.Gegenstand;
+import dgdlz.raeume.Raum;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -88,7 +89,8 @@ public class TextadventureController implements Initializable {
 		zeigeGegenstaende();
 		starteMenueSetup();
 		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
-		raumButtonsEventHandler();
+		starteTastenEventHandler();
+		// raumButtonsEventHandler();
 	}
 
 	// Menüsteuerung
@@ -112,40 +114,54 @@ public class TextadventureController implements Initializable {
 
 	// TODO in eigene Klasse auslagern
 	// Spielersteuerung
-	private void starteTastenEventHandler(Himmelsrichtung himmelsrichtung) {
-		root.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+	private void starteTastenEventHandler() {
+		root.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+				Point moeglichePos = spieler.getPosition();
 				switch (event.getCode()) {
 					case UP:
-						// TODO elegantere Lösung für Prüfung für illegalen Zug finden, sonsonsten
-						// falsche Ausgabe ("Du gehst nach Norden" erscheint im Label, obgleich Zug
-						// sofort rückgängig gemacht wird!
-						if (Himmelsrichtung.NORDEN == himmelsrichtung) {
-							spieler.nachNordenBewegen();
-							textausgabe("Du gehst nach Norden.");
+						moeglichePos.move(spieler.getPositionX(), spieler.getPositionY() + 1);
+						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
+							if (r.getPosition().equals(moeglichePos)) {
+								spieler.nachNordenBewegen();
+								textausgabe("Du gehst nach Norden.");
+								event.consume();
+							}
 						}
 						break;
 					case DOWN:
-						if (Himmelsrichtung.SUEDEN == himmelsrichtung) {
-							spieler.nachSuedenBewegen();
-							textausgabe("Du gehst nach Süden.");
+						moeglichePos.move(spieler.getPositionX(), spieler.getPositionY() - 1);
+						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
+							if (r.getPosition().equals(moeglichePos)) {
+								spieler.nachSuedenBewegen();
+								textausgabe("Du gehst nach Süden.");
+								event.consume();
+							}
 						}
 						break;
 					case LEFT:
-						if (Himmelsrichtung.WESTEN == himmelsrichtung) {
-							spieler.nachWestenBewegen();
-							textausgabe("Du gehst nach Westen.");
+						moeglichePos.move(spieler.getPositionY(), spieler.getPositionX() - 1);
+						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
+							if (r.getPosition().equals(moeglichePos)) {
+								spieler.nachWestenBewegen();
+								textausgabe("Du gehst nach Westen.");
+								event.consume();
+							}
 						}
 						break;
 					case RIGHT:
-						if (Himmelsrichtung.OSTEN == himmelsrichtung) {
-							spieler.nachOstenBewegen();
-							textausgabe("Du gehst nach Osten.");
+						moeglichePos.move(spieler.getPositionY(), spieler.getPositionX() + 1);
+						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
+							if (r.getPosition().equals(moeglichePos)) {
+								spieler.nachOstenBewegen();
+								textausgabe("Du gehst nach Osten.");
+								event.consume();
+							}
 						}
 						break;
 					default:
-						break;
+						throw new IllegalerRaumException("Spieler kann sich nur in einen bestehenden Raum bewegen.");
 				}
 			}
 		});
