@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import dgdlz.akteure.Spieler;
 import dgdlz.gegenstaende.Gegenstand;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -80,13 +82,13 @@ public class TextadventureController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		spieler.setPosition(new Point(0, 0)); // TODO
+		spieler.setPosition(new Point(0, 0));
 		spielfeld.initSpielfeld();
 		zeigeOptionenAufenthaltsraum();
 		zeigeGegenstaende();
 		starteMenueSetup();
-		starteTastenEventHandler();
 		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
+		raumButtonsEventHandler();
 	}
 
 	// Menüsteuerung
@@ -110,7 +112,7 @@ public class TextadventureController implements Initializable {
 
 	// TODO in eigene Klasse auslagern
 	// Spielersteuerung
-	private void starteTastenEventHandler() {
+	private void starteTastenEventHandler(Himmelsrichtung himmelsrichtung) {
 		root.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -119,36 +121,41 @@ public class TextadventureController implements Initializable {
 						// TODO elegantere Lösung für Prüfung für illegalen Zug finden, sonsonsten
 						// falsche Ausgabe ("Du gehst nach Norden" erscheint im Label, obgleich Zug
 						// sofort rückgängig gemacht wird!
-						spieler.nachNordenBewegen();
-						if (spielfeld.ermittleAufenthaltsraumSpieler(spieler) == null) {
-							spieler.nachSuedenBewegen();
+						if (Himmelsrichtung.NORDEN == himmelsrichtung) {
+							spieler.nachNordenBewegen();
+							textausgabe("Du gehst nach Norden.");
 						}
-						textausgabe("Du gehst nach Norden.");
 						break;
 					case DOWN:
-						spieler.nachSuedenBewegen();
-						if (spielfeld.ermittleAufenthaltsraumSpieler(spieler) == null) {
-							spieler.nachNordenBewegen();
+						if (Himmelsrichtung.SUEDEN == himmelsrichtung) {
+							spieler.nachSuedenBewegen();
+							textausgabe("Du gehst nach Süden.");
 						}
-						textausgabe("Du gehst nach Süden.");
 						break;
 					case LEFT:
-						spieler.nachWestenBewegen();
-						if (spielfeld.ermittleAufenthaltsraumSpieler(spieler) == null) {
-							spieler.nachOstenBewegen();
+						if (Himmelsrichtung.WESTEN == himmelsrichtung) {
+							spieler.nachWestenBewegen();
+							textausgabe("Du gehst nach Westen.");
 						}
-						textausgabe("Du gehst nach Osten.");
 						break;
 					case RIGHT:
-						spieler.nachOstenBewegen();
-						if (spielfeld.ermittleAufenthaltsraumSpieler(spieler) == null) {
-							spieler.nachWestenBewegen();
+						if (Himmelsrichtung.OSTEN == himmelsrichtung) {
+							spieler.nachOstenBewegen();
+							textausgabe("Du gehst nach Osten.");
 						}
-						textausgabe("Du gehst nach Westen.");
 						break;
 					default:
 						break;
 				}
+			}
+		});
+	}
+
+	public void raumButtonsEventHandler() {
+		root.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				spielfeld.ermittleDieNachbarraeume(spieler);
 			}
 		});
 	}

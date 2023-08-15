@@ -126,7 +126,7 @@ public class Spielfeld {
 				return r;
 			}
 		}
-		throw new IllegalArgumentException("Spieler muss in einem Raum sein.");
+		throw new IllegalerRaumException("Spieler muss in einem Raum sein.");
 	}
 
 	public List<Raum> ermittleDieNachbarraeume(Spieler spieler) {
@@ -154,7 +154,7 @@ public class Spielfeld {
 				return Himmelsrichtung.WESTEN;
 			}
 		}
-		throw new IllegalArgumentException(
+		throw new IllegalerRaumException(
 				"Es gibt nur vier Himmelsrichtungen, in die eine Spielfigur bewegt werden kann.");
 	}
 

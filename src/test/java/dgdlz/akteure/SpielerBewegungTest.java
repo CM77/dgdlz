@@ -1,13 +1,18 @@
 package dgdlz.akteure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Point;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import dgdlz.IllegalerRaumException;
 import dgdlz.Spielfeld;
+import dgdlz.raeume.Raum;
 
 public class SpielerBewegungTest {
 
@@ -20,6 +25,45 @@ public class SpielerBewegungTest {
 		spielfeld.getAlleRaeume().clear();
 		spielfeld.getNachbarraeume().clear();
 		spielfeld.initSpielfeld();
+	}
+
+	@Test
+	public void test_Position_Spieler__Aufenthaltsraum() {
+		// Given:
+		spielerActual.setPosition(new Point(0, 0));
+		Raum expectedRaum = new Raum();
+		expectedRaum.setPosition(new Point(0, 0));
+		Point expected = expectedRaum.getPosition();
+
+		// When:
+		Point actual = spielfeld.ermittleAufenthaltsraumSpieler(spielerActual).getPosition();
+
+		// Then:
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void test_Position_Spieler__Nachbarraeume() {
+		// Given:
+		spielerActual.setPosition(new Point(0, 0));
+
+		// When:
+		List<Raum> actual = spielfeld.ermittleDieNachbarraeume(spielerActual);
+
+		// Then:
+		assertTrue(actual.size() == 2);
+	}
+
+	@Test
+	public void test_Position_Spieler__Nachbarraeume2() {
+		// Given:
+		spielerActual.setPosition(new Point(0, 3));
+
+		// When:
+		List<Raum> actual = spielfeld.ermittleDieNachbarraeume(spielerActual);
+
+		// Then:
+		assertTrue(actual.size() == 1);
 	}
 
 	@Test
@@ -68,6 +112,20 @@ public class SpielerBewegungTest {
 
 		// Then:
 		assertEquals(spielerActual.getPosition(), new Point(1, 0));
+	}
+
+	@Test
+	public void test_Position_Spieler__unmoeglicher_Spielzug() {
+		// Given:
+		spielerActual.setPosition(new Point(0, 0));
+
+		// When:
+		spielerActual.nachSuedenBewegen();
+
+		// Then:
+		assertThrowsExactly(IllegalerRaumException.class, () -> {
+
+		});
 	}
 
 }
