@@ -61,7 +61,7 @@ public class TextadventureController implements Initializable {
 	@FXML
 	private Button rucksackButton;
 	@FXML
-	private TextArea textausgabeTa; // TODO TextFlow für variable Schriftgröße etc?s
+	private TextArea textausgabeTa; // TODO TextFlow für variable Schriftgröße etc?
 									// www.tutorialspoint.com/javafx/layout_panes_textflow.htm
 	@FXML
 	private ImageView roomIv;
@@ -69,28 +69,23 @@ public class TextadventureController implements Initializable {
 	private TextField aufenthaltsraumTf;
 
 	private Button erkundungsButton = new Button();
-	private Button nordButton = new Button("nach Norden gehen");
-	private Button suedButton = new Button("nach Süden gehen");
-	private Button ostButton = new Button("nach Osten gehen");
-	private Button westButton = new Button("nach Westen gehen");
-
 	private List<Button> listeMitRaumAktionsButtons = new ArrayList<>(Arrays.asList());
 	private List<Button> listeMitGegenstandsAktionsButtons = new ArrayList<>(Arrays.asList());
 	private String currentRoom;
 
 	Spieler spieler = new Spieler();
 	Spielfeld spielfeld = Spielfeld.getInstance();
+	ButtonFactory buttonFactory = new ButtonFactory();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		spieler.setPosition(new Point(0, 0));
 		spielfeld.initSpielfeld();
-		zeigeOptionenAufenthaltsraum();
 		zeigeGegenstaende();
 		starteMenueSetup();
 		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
 		starteTastenEventHandler();
-		// raumButtonsEventHandler();
+		raumButtonsEventHandler();
 	}
 
 	// Menüsteuerung
@@ -168,10 +163,10 @@ public class TextadventureController implements Initializable {
 	}
 
 	public void raumButtonsEventHandler() {
-		root.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+		raumButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
-				spielfeld.ermittleDieNachbarraeume(spieler);
+				zeigeOptionenAufenthaltsraum();
 			}
 		});
 	}
@@ -210,11 +205,9 @@ public class TextadventureController implements Initializable {
 	}
 
 	private void zeigeOptionenAufenthaltsraum() {
-		raumButton.setOnAction(e -> {
-			starteZugLogik();
-			starteErkundungsLogik();
-			zeigeAufenthaltsraum();
-		});
+		starteZugLogik();
+		starteErkundungsLogik();
+		zeigeAufenthaltsraum();
 	}
 
 	private void zeigeGegenstaende() {
@@ -244,7 +237,6 @@ public class TextadventureController implements Initializable {
 		raumAktionenVb.getChildren().clear();
 		listeMitRaumAktionsButtons.clear();
 		spielfeld.ermittleDieNachbarraeume(spieler);
-		spielfeld.ermittleMoeglicheHimmelsrichtungen(spieler);
 		fuegeZugbuttonsInListe();
 		himmelsrichtungButtonsVorbereiten();
 		himmelsrichtungButtonsAktivieren();
@@ -253,19 +245,19 @@ public class TextadventureController implements Initializable {
 	private void fuegeZugbuttonsInListe() {
 		switch (spielfeld.ermittleMoeglicheHimmelsrichtungen(spieler)) {
 			case NORDEN: {
-				listeMitRaumAktionsButtons.add(nordButton);
+				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Norden gehen", "moveNorth"));
 				break;
 			}
 			case SUEDEN: {
-				listeMitRaumAktionsButtons.add(suedButton);
+				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Süden gehen", "moveSouth"));
 				break;
 			}
 			case WESTEN: {
-				listeMitRaumAktionsButtons.add(westButton);
+				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Westen gehen", "moveWest"));
 				break;
 			}
 			case OSTEN: {
-				listeMitRaumAktionsButtons.add(ostButton);
+				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Osten gehen", "moveEast"));
 				break;
 			}
 			default:
@@ -280,18 +272,36 @@ public class TextadventureController implements Initializable {
 	}
 
 	private void himmelsrichtungButtonsAktivieren() {
-		nordButton.setOnAction(e -> {
-			textausgabe(spieler.nachNordenBewegen());
-		});
-		suedButton.setOnAction(e -> {
-			textausgabe(spieler.nachSuedenBewegen());
-		});
-		ostButton.setOnAction(e -> {
-			textausgabe(spieler.nachOstenBewegen());
-		});
-		westButton.setOnAction(e -> {
-			textausgabe(spieler.nachWestenBewegen());
-		});
+		for (Button b : listeMitRaumAktionsButtons) {
+			switch (b.getId()) {
+				case "moveNorth": {
+					b.setOnAction(e -> {
+						textausgabe(spieler.nachNordenBewegen());
+					});
+					break;
+				}
+				case "moveSouth": {
+					b.setOnAction(e -> {
+						textausgabe(spieler.nachSuedenBewegen());
+					});
+					break;
+				}
+				case "moveWest": {
+					b.setOnAction(e -> {
+						textausgabe(spieler.nachWestenBewegen());
+					});
+					break;
+				}
+				case "moveEast": {
+					b.setOnAction(e -> {
+						textausgabe(spieler.nachOstenBewegen());
+					});
+					break;
+				}
+				default:
+					throw new IllegalArgumentException("Unexpected value: "); // TODO
+			}
+		}
 	}
 
 	private void starteErkundungsLogik() {
