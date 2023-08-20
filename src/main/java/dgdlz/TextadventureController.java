@@ -296,6 +296,12 @@ public class TextadventureController implements Initializable {
 				default:
 					throw new IllegalArgumentException("Unexpected value: "); // TODO
 			}
+			b.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					zeigeOptionenAufenthaltsraum();
+				}
+			});
 		}
 	}
 
