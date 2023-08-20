@@ -13,7 +13,6 @@ import dgdlz.akteure.Spieler;
 import dgdlz.gegenstaende.Gegenstand;
 import dgdlz.raeume.Raum;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -84,8 +83,8 @@ public class TextadventureController implements Initializable {
 		zeigeGegenstaende();
 		starteMenueSetup();
 		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
-		starteTastenEventHandler();
 		zeigeOptionenAufenthaltsraum();
+		starteTastenEventHandler();
 		raumButtonEventHandler();
 	}
 
@@ -110,63 +109,51 @@ public class TextadventureController implements Initializable {
 
 	// TODO in eigene Klasse auslagern
 	// Spielersteuerung
+	// TODO zeigeOptionenAufenthaltsraum(); geht nicht
 	private void starteTastenEventHandler() {
 		root.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				Point moeglichePos = spieler.getPosition();
-				switch (event.getCode()) {
-					case UP:
-						moeglichePos.move(spieler.getPositionX(), spieler.getPositionY() + 1);
-						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
-							if (r.getPosition().equals(moeglichePos)) {
-								spieler.nachNordenBewegen();
-								textausgabe("Du gehst nach Norden.");
+				for (Button b : listeMitRaumAktionsButtons) {
+					switch (event.getCode()) {
+						case UP:
+							if (b.getId().equals("moveNorth")) {
+								textausgabe(spieler.nachNordenBewegen());
 								event.consume();
 							}
-						}
-						break;
-					case DOWN:
-						moeglichePos.move(spieler.getPositionX(), spieler.getPositionY() - 1);
-						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
-							if (r.getPosition().equals(moeglichePos)) {
-								spieler.nachSuedenBewegen();
-								textausgabe("Du gehst nach Süden.");
+							break;
+						case DOWN:
+							if (b.getId().equals("moveSouth")) {
+								textausgabe(spieler.nachSuedenBewegen());
 								event.consume();
 							}
-						}
-						break;
-					case LEFT:
-						moeglichePos.move(spieler.getPositionY(), spieler.getPositionX() - 1);
-						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
-							if (r.getPosition().equals(moeglichePos)) {
-								spieler.nachWestenBewegen();
-								textausgabe("Du gehst nach Westen.");
+							break;
+						case LEFT:
+							if (b.getId().equals("moveWest")) {
+								textausgabe(spieler.nachWestenBewegen());
 								event.consume();
 							}
-						}
-						break;
-					case RIGHT:
-						moeglichePos.move(spieler.getPositionY(), spieler.getPositionX() + 1);
-						for (Raum r : spielfeld.ermittleDieNachbarraeume(spieler)) {
-							if (r.getPosition().equals(moeglichePos)) {
-								spieler.nachOstenBewegen();
-								textausgabe("Du gehst nach Osten.");
+							break;
+						case RIGHT:
+							if (b.getId().equals("moveEast")) {
+								textausgabe(spieler.nachOstenBewegen());
 								event.consume();
 							}
-						}
-						break;
-					default:
-						throw new IllegalerRaumException("Spieler kann sich nur in einen bestehenden Raum bewegen.");
+							break;
+						default:
+							throw new IllegalerRaumException(
+									"Spieler kann sich nur in einen bestehenden Raum bewegen.");
+					}
 				}
+				zeigeOptionenAufenthaltsraum();
 			}
 		});
 	}
 
 	public void raumButtonEventHandler() {
-		raumButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
+		raumButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(Event event) {
+			public void handle(MouseEvent event) {
 				zeigeOptionenAufenthaltsraum();
 			}
 		});
