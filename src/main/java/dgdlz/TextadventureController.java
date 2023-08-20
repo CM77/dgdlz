@@ -85,7 +85,8 @@ public class TextadventureController implements Initializable {
 		starteMenueSetup();
 		aufenthaltsraumTf.getStyleClass().add("aufenthaltsraumTf"); // TODO Konstante
 		starteTastenEventHandler();
-		raumButtonsEventHandler();
+		zeigeOptionenAufenthaltsraum();
+		raumButtonEventHandler();
 	}
 
 	// Menüsteuerung
@@ -162,7 +163,7 @@ public class TextadventureController implements Initializable {
 		});
 	}
 
-	public void raumButtonsEventHandler() {
+	public void raumButtonEventHandler() {
 		raumButton.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -206,7 +207,7 @@ public class TextadventureController implements Initializable {
 
 	private void zeigeOptionenAufenthaltsraum() {
 		starteZugLogik();
-		starteErkundungsLogik();
+		starteErkundungsLogik(); // TODO
 		zeigeAufenthaltsraum();
 	}
 
@@ -237,31 +238,25 @@ public class TextadventureController implements Initializable {
 		raumAktionenVb.getChildren().clear();
 		listeMitRaumAktionsButtons.clear();
 		spielfeld.ermittleDieNachbarraeume(spieler);
-		fuegeZugbuttonsInListe();
+		createMoeglicheZugbuttons();
 		himmelsrichtungButtonsVorbereiten();
 		himmelsrichtungButtonsAktivieren();
 	}
 
-	private void fuegeZugbuttonsInListe() {
-		switch (spielfeld.ermittleMoeglicheHimmelsrichtungen(spieler)) {
-			case NORDEN: {
+	public void createMoeglicheZugbuttons() {
+		for (Raum r : spielfeld.getNachbarraeume()) {
+			if (r.getPosition().y == spieler.getPosition().y + 1) {
 				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Norden gehen", "moveNorth"));
-				break;
 			}
-			case SUEDEN: {
+			if (r.getPosition().y == spieler.getPosition().y - 1) {
 				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Süden gehen", "moveSouth"));
-				break;
 			}
-			case WESTEN: {
-				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Westen gehen", "moveWest"));
-				break;
-			}
-			case OSTEN: {
+			if (r.getPosition().x == spieler.getPosition().x + 1) {
 				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Osten gehen", "moveEast"));
-				break;
 			}
-			default:
-				throw new IllegalArgumentException("Himmelsrichtung unbekannt");
+			if (r.getPosition().x == spieler.getPosition().x - 1) {
+				listeMitRaumAktionsButtons.add(buttonFactory.createButton("nach Westen gehen", "moveWest"));
+			}
 		}
 	}
 
@@ -286,15 +281,15 @@ public class TextadventureController implements Initializable {
 					});
 					break;
 				}
-				case "moveWest": {
-					b.setOnAction(e -> {
-						textausgabe(spieler.nachWestenBewegen());
-					});
-					break;
-				}
 				case "moveEast": {
 					b.setOnAction(e -> {
 						textausgabe(spieler.nachOstenBewegen());
+					});
+					break;
+				}
+				case "moveWest": {
+					b.setOnAction(e -> {
+						textausgabe(spieler.nachWestenBewegen());
 					});
 					break;
 				}

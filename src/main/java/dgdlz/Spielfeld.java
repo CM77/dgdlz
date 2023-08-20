@@ -139,23 +139,4 @@ public class Spielfeld {
 		return aktuelleNachbarraeume;
 	}
 
-	public Himmelsrichtung ermittleMoeglicheHimmelsrichtungen(Spieler spieler) {
-		for (Raum r : aktuelleNachbarraeume) {
-			if (r.getPosition().y == spieler.getPosition().y + 1) {
-				return Himmelsrichtung.NORDEN;
-			}
-			if (r.getPosition().y == spieler.getPosition().y - 1) {
-				return Himmelsrichtung.SUEDEN;
-			}
-			if (r.getPosition().x == spieler.getPosition().x + 1) {
-				return Himmelsrichtung.OSTEN;
-			}
-			if (r.getPosition().x == spieler.getPosition().x - 1) {
-				return Himmelsrichtung.WESTEN;
-			}
-		}
-		throw new IllegalerRaumException(
-				"Es gibt nur vier Himmelsrichtungen, in die eine Spielfigur bewegt werden kann.");
-	}
-
 }
