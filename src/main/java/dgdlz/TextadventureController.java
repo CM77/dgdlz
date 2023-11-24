@@ -109,7 +109,6 @@ public class TextadventureController implements Initializable {
 
 	// TODO in eigene Klasse auslagern
 	// Spielersteuerung
-	// TODO zeigeOptionenAufenthaltsraum(); geht nicht
 	private void starteTastenEventHandler() {
 		root.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override

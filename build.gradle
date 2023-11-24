@@ -40,6 +40,8 @@ java {
     }
 }
 
+//applicationDefaultJvmArgs = ["--module-path /Users/Chris/Eigene\ Docs/IT/Java/Workspace/dgdlz/libs/javafx-sdk-20.0.2/lib --add-modules javafx.controls,javafx.fxml"]
+
 application {
     // Define the main class for the application.
     mainClass = 'dgdlz.TextadventureApp'
